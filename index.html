@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>soulgazing</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.rawgit.com/bradley/Blotter/master/build/blotter.min.js"></script>
+    <script src="https://rawgit.com/bradley/Blotter/master/build/materials/liquidDistortMaterial.js"></script>
+</head>
+
+<body>
+    <div class="popup" onclick="myFunction()">How does it work?
+        <span class="popuptext" id="myPopup">This project is a poetical experimentation using steganography techniques. In this case, it used the LSB (Least Signficant Bit) method for concealing text information inside of an image - which goes totally unnoticed by human eyes, unless you decrypt it. It was based on CryptoStego, a JS library for steganography. </span>
+      </div>
+    <svg class="filter" xmlns="http://www.w3.org/2000/svg">
+		<filter id="noise">
+			<feTurbulence baseFrequency="0.7" numOctaves="1" seed="50" stitchTiles="stitch" type="turbulence">
+			</feTurbulence>
+			<fedisplacementmap id="displacement" in="SourceGraphic" scale="20" xChannelSelector="G"></fedisplacementmap>
+		</filter>
+	</svg>
+    <div>
+        
+
+        <h1 id="main"></h1> <img src="dataset-recovery.png" />
+        <div class="text">
+            <h2>This image was extracted from a defunct ML training dataset. Some say it is haunted, some say it is
+                nothing but a corrupted file, binary numbers gone awry.
+                <br>It might look like any other training data picture, but look closer. It might have a deeper meaning.
+            </h2>
+
+            <h2>Do not fear it. The ghost, if there at all, probably won't harm your computer. After all, it yearns to
+                be gazed by human eyes.
+                Try downloading it and inspecting it below:</h2>
+            <h6>(at your own risk, mind you)</h6>
+
+
+            <input type="file" id="file1" accept="image/*" /> <br /><br />
+            <a href="#result" onclick='readIMG()' data-text="Gaze into its soul" class="button effect_glitch">
+                👁  Gaze into its soul  👁
+              </a>
+            <br />
+        </div>
+        
+
+    </div>
+<div id="result" style=" margin-top:5%; "></div>
+</body>
+<script src="jquery.min.js"></script>
+<script>
+    container = document.getElementById("main");
+
+    const text = new Blotter.Text("Soulgazing", {
+        family: "serif",
+        size: 280,
+        fill: "#fff"
+    });
+
+    let material = new Blotter.LiquidDistortMaterial();
+
+    material.uniforms.uSpeed.value = 0.15;
+    material.uniforms.uVolatility.value = 0.1;
+    material.uniforms.uSeed.value = 0.3;
+
+    let blotter = new Blotter(material, {
+        texts: text
+    });
+
+    let scope = blotter.forText(text);
+
+    scope.appendTo(container);
+</script>
+<!-- CryptoStego JS files.-->
+<script type="text/javascript" src="../../src/sha512.js"></script>
+<script type="text/javascript" src="../../src/utf_8.js"></script>
+<script type="text/javascript" src="../../src/mersenne-twister.js"></script>
+<script type="text/javascript" src="../../src/utils.js"></script>
+<script type="text/javascript" src="../../src/readimg.js"></script>
+<script type="text/javascript" src="../../src/setimg.js"></script>
+<script type="text/javascript" src="../../src/main.js"></script>
+<!-- above scripts equivalent to <script type="text/javascript" src="cryptostego.min.js"></script>-->
+<script>
+    // When the user clicks on <div>, open the popup
+function myFunction() {
+  var popup = document.getElementById("myPopup");
+  popup.classList.toggle("show");
+}
+
+
+    function readIMG() {
+        function readfunc() {
+            var t = readMsgFromCanvas('canvas', $("#pass1").val(), 0);
+            if (t != null) {
+                t = t.split('&').join('&amp;');
+                t = t.split(' ').join('&nbsp;');
+                t = t.split('<').join('&lt;');
+                t = t.split('>').join('&gt;');
+                t = t.replace(/(?:\r\n|\r|\n)/g, '<br />');
+                $("#result").html(t);
+            } else $("#result").html('no soul here');
+
+        }
+        loadIMGtoCanvas('file1', 'canvas', readfunc);
+        
+    }
+</script>
+
+</html>
